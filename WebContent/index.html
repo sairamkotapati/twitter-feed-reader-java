@@ -1,0 +1,105 @@
+<html>
+<head>
+<title>Twitter Feed Reader Java App</title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<style>
+table {
+	width: 100%;
+}
+
+img {
+	width: 80px;
+	height: 80px;
+}
+
+.tweetimage {
+	border: none;
+	width: 150px;
+	height: 100px;
+	float: left;
+}
+
+table, th, td {
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+
+th, td {
+	padding: 5px;
+	text-align: left;
+}
+
+table#t01 tr:nth-child(even) {
+	background-color: #eee;
+}
+
+table#t01 tr:nth-child(odd) {
+	background-color: #fff;
+}
+
+table#t01 th {
+	background-color: black;
+	color: white;
+}
+
+input {
+	float: right;
+	margin-bottom: 2%;
+}
+
+h1 {
+	text-align: center;
+}
+
+h3 {
+	text-align: right;
+}
+
+body { 
+	background-color: #f3f3f3;
+}
+
+</style>
+</head>
+<body>
+	<h1>Twitter Feed Reader Java Based Application</h1>
+	<div data-ng-app="myApp" data-ng-controller="myCtrl">
+		<h3>Search for tweets with this keyword: <input type="text" data-ng-model="searchKeyword"> </h3>
+		<table>
+			<tr>
+				<th>User Name</th>
+				<th>User Screen Name</th>
+				<th>User Profile background Image</th>
+				<th>Tweet Content</th>
+				<th>Retweet Count</th>
+				<th>Tweet Created Date</th>
+			</tr>
+			<tr data-ng-repeat="feed in apiResponse | filter:{'text':searchKeyword}">
+				<td>{{ feed.user.name }}</td>
+				<td>{{ feed.user.screen_name }}</td>
+				<td><img data-ng-src="{{ feed.user.profile_image_url }}"></img></td>
+				<td>{{ feed.text }} <br /> <img class="tweetimage" data-ng-src="{{ feed.entities.media[0].media_url }}"></img></td>
+				<td>{{ feed.retweet_count }}</td>
+				<td>{{ feed.created_at }}</td>
+			</tr>
+		</table>
+	</div>
+
+
+	<script>
+		var app = angular.module("myApp", []);
+		app.controller("myCtrl", function($scope,$http) {
+			// $http.get("http://localhost:8080/TwitterFeedReader-Azure/TwitterFeedReaderServlet")
+			// Use below line when publishing to Azure
+			 $http.get("https://twitterfeedreaderjavaapp.azurewebsites.net/TwitterFeedReaderServlet")
+			    .then(function(response) {
+			        $scope.apiResponse=response.data;
+			    }, function(error){
+		         console.log(error); //
+		     }) ; 
+		});
+	</script>
+
+</body>
+</html>
